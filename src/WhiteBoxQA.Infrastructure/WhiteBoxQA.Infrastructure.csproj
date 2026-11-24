@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <InternalsVisibleTo Include="WhiteBoxQA.Tests" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../WhiteBoxQA.Core/WhiteBoxQA.Core.csproj" />
+    <PackageReference Include="ClosedXML" Version="0.105.0" />
+  </ItemGroup>
+</Project>

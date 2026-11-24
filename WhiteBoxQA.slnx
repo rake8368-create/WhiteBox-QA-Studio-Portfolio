@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/WhiteBoxQA.App/WhiteBoxQA.App.csproj" />
+    <Project Path="src/WhiteBoxQA.Core/WhiteBoxQA.Core.csproj" />
+    <Project Path="src/WhiteBoxQA.Infrastructure/WhiteBoxQA.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/WhiteBoxQA.Tests/WhiteBoxQA.Tests.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../WhiteBoxQA.Core/WhiteBoxQA.Core.csproj" />
+    <ProjectReference Include="../WhiteBoxQA.Infrastructure/WhiteBoxQA.Infrastructure.csproj" />
+  </ItemGroup>
+  <!-- Keep the Tree-sitter grammars used by the app. -->
+  <Target Name="KeepUsedTreeSitterLibraries" AfterTargets="ComputeResolvedFilesToPublishList">
+    <ItemGroup>
+      <ResolvedFileToPublish Remove="@(ResolvedFileToPublish)"
+                             Condition="$([System.String]::Copy('%(ResolvedFileToPublish.Filename)').StartsWith('tree-sitter-'))
+                                        And '%(ResolvedFileToPublish.Filename)' != 'tree-sitter-python'
+                                        And '%(ResolvedFileToPublish.Filename)' != 'tree-sitter-java'
+                                        And '%(ResolvedFileToPublish.Filename)' != 'tree-sitter-javascript'
+                                        And '%(ResolvedFileToPublish.Filename)' != 'tree-sitter-cpp'
+                                        And '%(ResolvedFileToPublish.Filename)' != 'tree-sitter-typescript'
+                                        And '%(ResolvedFileToPublish.Filename)' != 'tree-sitter-tsx'" />
+    </ItemGroup>
+  </Target>
+</Project>

@@ -1,0 +1,98 @@
+<UserControl x:Class="WhiteBoxQA.App.FlowResultsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:core="clr-namespace:WhiteBoxQA.Core;assembly=WhiteBoxQA.Core">
+    <Grid Margin="8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <DockPanel Margin="0,0,0,6">
+            <TextBlock Text="{x:Static core:MethodFlow.CoverageLabel}" DockPanel.Dock="Right"
+                       Foreground="{StaticResource Muted}" Margin="12,0,0,0" />
+            <TextBlock x:Name="SummaryText" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" />
+        </DockPanel>
+        <Grid x:Name="Results" Grid.Row="1" Visibility="Collapsed">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="10*" />
+                <ColumnDefinition Width="8" />
+                <ColumnDefinition Width="9*" />
+            </Grid.ColumnDefinitions>
+            <DataGrid x:Name="MethodsGrid" Style="{StaticResource FindingsGrid}" AutoGenerateColumns="False"
+                      AutomationProperties.Name="함수·메서드별 기초 복잡도" SelectionChanged="MethodChanged">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="언어" Binding="{Binding LanguageLabel}" Width="70"
+                                        ElementStyle="{StaticResource GridText}" />
+                    <DataGridTextColumn Header="함수·메서드" Binding="{Binding MethodName}" Width="2*" MinWidth="92"
+                                        ElementStyle="{StaticResource GridText}" />
+                    <DataGridTextColumn Header="파일" Binding="{Binding FileName}" Width="*" MinWidth="65"
+                                        ElementStyle="{StaticResource GridText}" />
+                    <DataGridTextColumn Header="시작" Binding="{Binding StartLine}" Width="44"
+                                        ElementStyle="{StaticResource GridText}" />
+                    <DataGridTextColumn Header="종료" Binding="{Binding EndLine}" Width="44"
+                                        ElementStyle="{StaticResource GridText}" />
+                    <DataGridTextColumn Header="복잡도" Binding="{Binding Complexity, TargetNullValue=—}" Width="58"
+                                        ElementStyle="{StaticResource GridText}" />
+                    <DataGridTextColumn Header="평가" Binding="{Binding Rating}" Width="70"
+                                        ElementStyle="{StaticResource GridText}" />
+                    <DataGridTextColumn Header="상태" Binding="{Binding StatusLabel}" Width="76"
+                                        ElementStyle="{StaticResource GridText}" />
+                </DataGrid.Columns>
+            </DataGrid>
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <ScrollViewer MaxHeight="76" VerticalScrollBarVisibility="Auto" Margin="0,0,0,5">
+                    <StackPanel>
+                        <TextBlock x:Name="MethodSummary" FontWeight="SemiBold" TextWrapping="Wrap" />
+                        <TextBlock x:Name="Explanation" Style="{StaticResource SecondaryText}" />
+                        <TextBlock x:Name="Limitation" Style="{StaticResource SecondaryText}" />
+                    </StackPanel>
+                </ScrollViewer>
+                <TabControl Grid.Row="1" Background="{StaticResource Inset}" BorderBrush="{StaticResource Divider}">
+                    <TabItem x:Name="BranchesTab" Header="조건 및 분기">
+                        <DataGrid x:Name="BranchesGrid" Style="{StaticResource FindingsGrid}" AutoGenerateColumns="False"
+                                  AutomationProperties.Name="조건 및 분기 목록" SelectionChanged="BranchChanged"
+                                  MouseDoubleClick="BranchDoubleClick">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="줄" Binding="{Binding Line}" Width="39"
+                                                    ElementStyle="{StaticResource GridText}" />
+                                <DataGridTextColumn Header="종류" Binding="{Binding Kind}" Width="96"
+                                                    ElementStyle="{StaticResource GridText}" />
+                                <DataGridTextColumn Header="조건" Binding="{Binding Condition}" Width="*" MinWidth="85"
+                                                    ElementStyle="{StaticResource GridText}" />
+                                <DataGridTextColumn Header="참 블록" Binding="{Binding TrueTarget, TargetNullValue=—}" Width="64"
+                                                    ElementStyle="{StaticResource GridText}" />
+                                <DataGridTextColumn Header="거짓 블록" Binding="{Binding FalseTarget, TargetNullValue=—}" Width="76"
+                                                    ElementStyle="{StaticResource GridText}" />
+                                <DataGridTextColumn Header="집계" Binding="{Binding Inclusion}" Width="84"
+                                                    ElementStyle="{StaticResource GridText}" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </TabItem>
+                    <TabItem x:Name="BlocksTab" Header="기본 블록">
+                        <DataGrid x:Name="BlocksGrid" Style="{StaticResource FindingsGrid}" AutoGenerateColumns="False"
+                                  AutomationProperties.Name="기본 블록 목록" SelectionChanged="BlockChanged">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="번호" Binding="{Binding Ordinal}" Width="46"
+                                                    ElementStyle="{StaticResource GridText}" />
+                                <DataGridTextColumn Header="종류" Binding="{Binding Kind}" Width="*"
+                                                    ElementStyle="{StaticResource GridText}" />
+                                <DataGridTextColumn Header="줄" Binding="{Binding Line, TargetNullValue=—}" Width="42"
+                                                    ElementStyle="{StaticResource GridText}" />
+                                <DataGridTextColumn Header="도달성" Binding="{Binding Reachability}" Width="86"
+                                                    ElementStyle="{StaticResource GridText}" />
+                                <DataGridTextColumn Header="조건 경로" Binding="{Binding ConditionalTarget, TargetNullValue=—}" Width="72"
+                                                    ElementStyle="{StaticResource GridText}" />
+                                <DataGridTextColumn Header="기본 경로" Binding="{Binding NextTarget, TargetNullValue=—}" Width="72"
+                                                    ElementStyle="{StaticResource GridText}" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </TabItem>
+                </TabControl>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

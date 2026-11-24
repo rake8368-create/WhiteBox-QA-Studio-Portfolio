@@ -1,0 +1,1 @@
+class Java { void run() { try {} catch (Exception e) {} } }

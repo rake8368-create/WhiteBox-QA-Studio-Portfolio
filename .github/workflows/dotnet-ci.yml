@@ -1,0 +1,93 @@
+name: .NET CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dotnet-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+      DOTNET_GENERATE_ASPNET_CERTIFICATE: 'false'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
+        with:
+          dotnet-version: '10.0.x'
+      - name: NuGet 복원
+        run: dotnet restore WhiteBoxQA.slnx
+      - name: Release 빌드
+        run: dotnet build WhiteBoxQA.slnx -c Release --no-restore -warnaserror
+      - name: xUnit 테스트
+        run: dotnet test WhiteBoxQA.slnx -c Release --no-build --no-restore --logger "trx;LogFileName=ci.trx" --results-directory TestResults
+      - name: Windows x64 단일 EXE 배포
+        run: dotnet publish src/WhiteBoxQA.App -c Release -p:PublishProfile=WinX64SingleFile -o dist/ci-win-x64 -warnaserror
+      - name: 단일 EXE에서 Python 규칙 및 단락 평가 CFG 확인
+        shell: pwsh
+        run: |
+          $files = @(Get-ChildItem dist/ci-win-x64 -Force)
+          if ($files.Count -ne 1 -or $files[0].Name -ne 'WhiteBoxQA.App.exe') {
+            throw '단일 EXE 외의 파일 또는 디렉터리가 생성되었습니다.'
+          }
+          $env:Path = "$env:SystemRoot\System32;$env:SystemRoot"
+          $env:DOTNET_BUNDLE_EXTRACT_BASE_DIR = Join-Path $env:RUNNER_TEMP "whiteboxqa-python-bundle-$env:GITHUB_RUN_ID-$env:GITHUB_RUN_ATTEMPT"
+          $process = Start-Process $files[0].FullName -ArgumentList '--python-parser-smoke-test' -WindowStyle Hidden -PassThru
+          if (!$process.WaitForExit(60000)) { $process.Kill(); throw 'Python 분석 확인 시간이 초과되었습니다.' }
+          if ($process.ExitCode -ne 0) { throw "Python 분석 실패 ($($process.ExitCode))." }
+      - name: 단일 EXE에서 Java 규칙 및 C# CFG 확인
+        shell: pwsh
+        run: |
+          $env:Path = "$env:SystemRoot\System32;$env:SystemRoot"
+          $env:DOTNET_BUNDLE_EXTRACT_BASE_DIR = Join-Path $env:RUNNER_TEMP "whiteboxqa-java-bundle-$env:GITHUB_RUN_ID-$env:GITHUB_RUN_ATTEMPT"
+          $process = Start-Process (Resolve-Path dist/ci-win-x64/WhiteBoxQA.App.exe).Path -ArgumentList '--java-parser-smoke-test' -WindowStyle Hidden -PassThru
+          if (!$process.WaitForExit(60000)) { $process.Kill(); throw 'Java 분석 확인 시간이 초과되었습니다.' }
+          if ($process.ExitCode -ne 0) { throw "Java 분석 실패 ($($process.ExitCode))." }
+      - name: 단일 EXE에서 JavaScript 및 JSX 규칙 확인
+        shell: pwsh
+        run: |
+          $env:Path = "$env:SystemRoot\System32;$env:SystemRoot"
+          $env:DOTNET_BUNDLE_EXTRACT_BASE_DIR = Join-Path $env:RUNNER_TEMP "whiteboxqa-js-bundle-$env:GITHUB_RUN_ID-$env:GITHUB_RUN_ATTEMPT"
+          $process = Start-Process (Resolve-Path dist/ci-win-x64/WhiteBoxQA.App.exe).Path -ArgumentList '--javascript-parser-smoke-test' -WindowStyle Hidden -PassThru
+          if (!$process.WaitForExit(60000)) { $process.Kill(); throw 'JavaScript 분석 확인 시간이 초과되었습니다.' }
+          if ($process.ExitCode -ne 0) { throw "JavaScript 분석 실패 ($($process.ExitCode))." }
+      - name: 단일 EXE에서 C++ 구문 및 정적 규칙 확인
+        shell: pwsh
+        run: |
+          $env:Path = "$env:SystemRoot\System32;$env:SystemRoot"
+          $env:DOTNET_BUNDLE_EXTRACT_BASE_DIR = Join-Path $env:RUNNER_TEMP "whiteboxqa-cpp-bundle-$env:GITHUB_RUN_ID-$env:GITHUB_RUN_ATTEMPT"
+          $process = Start-Process (Resolve-Path dist/ci-win-x64/WhiteBoxQA.App.exe).Path -ArgumentList '--cpp-parser-smoke-test' -WindowStyle Hidden -PassThru
+          if (!$process.WaitForExit(60000)) { $process.Kill(); throw 'C++ 분석 확인 시간이 초과되었습니다.' }
+          if ($process.ExitCode -ne 0) { throw "C++ 분석 실패 ($($process.ExitCode))." }
+      - name: 단일 EXE에서 TypeScript 및 TSX 규칙 확인
+        shell: pwsh
+        run: |
+          $env:Path = "$env:SystemRoot\System32;$env:SystemRoot"
+          $env:DOTNET_BUNDLE_EXTRACT_BASE_DIR = Join-Path $env:RUNNER_TEMP "whiteboxqa-ts-bundle-$env:GITHUB_RUN_ID-$env:GITHUB_RUN_ATTEMPT"
+          $process = Start-Process (Resolve-Path dist/ci-win-x64/WhiteBoxQA.App.exe).Path -ArgumentList '--typescript-parser-smoke-test' -WindowStyle Hidden -PassThru
+          if (!$process.WaitForExit(60000)) { $process.Kill(); throw 'TypeScript 분석 확인 시간이 초과되었습니다.' }
+          if ($process.ExitCode -ne 0) { throw "TypeScript 분석 실패 ($($process.ExitCode))." }
+      - name: 로컬 실행·게시 스크립트 및 프로그램 버전 확인
+        shell: pwsh
+        run: ./tests/PublishScripts.Tests.ps1 -CiExe dist/ci-win-x64/WhiteBoxQA.App.exe
+      - name: 테스트 결과 보관
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: dotnet-test-results
+          path: TestResults/*.trx
+          if-no-files-found: warn
+          retention-days: 14

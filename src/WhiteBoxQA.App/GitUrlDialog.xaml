@@ -1,0 +1,21 @@
+<Window x:Class="WhiteBoxQA.App.GitUrlDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Git 저장소 불러오기" Width="490" SizeToContent="Height" ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
+        Background="{StaticResource Canvas}" Foreground="{StaticResource Text}"
+        FontFamily="Segoe UI, 맑은 고딕" FontSize="13">
+    <StackPanel Margin="20">
+        <Label Content="저장소 주소" Target="{Binding ElementName=UrlBox}"
+               Foreground="{StaticResource Text}" Padding="0,0,0,4" FontWeight="SemiBold" />
+        <TextBox x:Name="UrlBox" Padding="6" />
+        <TextBlock Text="공개 HTTPS 기본 브랜치의 소스 언어를 식별하고 C# 파일을 읽습니다."
+                   Style="{StaticResource SecondaryText}" Margin="0,7,0,0" />
+        <TextBlock x:Name="ErrorText" Foreground="{StaticResource High}" TextWrapping="Wrap" Margin="0,6,0,0" />
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,9,0,0">
+            <Button Content="취소" IsCancel="True" Style="{StaticResource StudioButton}" Margin="0,0,7,0" />
+            <Button Content="불러오기" IsDefault="True" Click="AcceptClick" Style="{StaticResource StudioButton}"
+                    Background="{StaticResource Accent}" Foreground="#10241F" BorderBrush="{StaticResource Accent}" />
+        </StackPanel>
+    </StackPanel>
+</Window>
