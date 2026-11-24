@@ -102,7 +102,7 @@ pwsh -File ./scripts/publish-win-x64.ps1
 
 **폴더 열기**에서 [혼합 검증 샘플](samples/portfolio-mixed/)을 선택하고 **검증 실행**을 누릅니다. `TS-001`을 검색하고 위험도 **높음**을 선택한 뒤 결과 상세의 **해당 줄로 이동**을 눌러 보세요. **제어 흐름 분석**에서는 C#·Python 결과를 확인할 수 있습니다.
 
-원본 기준에서 Release 경고·오류 0건, xUnit 486개 통과, 단일 EXE 스모크 5개 통과, Tree-sitter DLL 7개 추출을 확인했습니다. 공개 Windows CI는 같은 빌드·테스트·게시 게이트를 실행합니다. [검증 보고서](docs/VERIFICATION.md) · [공개 CI 실행 목록](https://github.com/rake8368-create/WhiteBox-QA-Studio-Portfolio/actions/workflows/dotnet-ci.yml?query=branch%3Amain)
+공개 Windows CI에서 Release 경고·오류 0건, xUnit 486개 통과·실패 0·건너뜀 0, 단일 EXE 게시와 스모크 5개 통과를 확인했습니다. 로컬 제품 EXE에서도 Tree-sitter DLL 7개가 추출됐습니다. [검증 보고서](docs/VERIFICATION.md) · [공개 CI 실행 목록](https://github.com/rake8368-create/WhiteBox-QA-Studio-Portfolio/actions/workflows/dotnet-ci.yml?query=branch%3Amain)
 
 ## 범위와 한계
 
