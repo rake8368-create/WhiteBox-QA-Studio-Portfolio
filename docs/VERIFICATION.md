@@ -12,9 +12,17 @@
 | 게시 스모크 | Python·CFG, Java·C# CFG, JavaScript·JSX, C++, TypeScript·TSX의 다섯 진입점 | [게시 스크립트](../scripts/publish-win-x64.ps1) · [스크립트 회귀](../tests/PublishScripts.Tests.ps1) |
 | 공개 Windows CI | 공개 `main`의 실행별 결과와 커밋 확인 | [실행 목록](https://github.com/rake8368-create/WhiteBox-QA-Studio-Portfolio/actions/workflows/dotnet-ci.yml?query=branch%3Amain) · [워크플로](../.github/workflows/dotnet-ci.yml) |
 
-최초 공개 스냅샷의 Windows CI에서 Release 경고·오류 0건, xUnit 486/486 통과·실패 0·건너뜀 0, Windows x64 단일 EXE와 스모크 다섯 개, 게시 스크립트와 버전을 확인했습니다. xUnit 수치는 실행 로그와 TRX의 카운터가 일치합니다. [공개 검증 실행](https://github.com/rake8368-create/WhiteBox-QA-Studio-Portfolio/actions/runs/45509589489)
+단일 EXE에서 추출된 DLL은 Tree-sitter 런타임과 Python, Java, JavaScript, C++, TypeScript, TSX 문법을 포함합니다.
 
-단일 EXE에서 추출된 네이티브 파일은 Tree-sitter 런타임, Python, Java, JavaScript, C++, TypeScript, TSX DLL입니다. 빌드와 앱 버전, 게시 스모크, 게시 실패 시 이전 EXE 보존은 서로 다른 검증 항목으로 다룹니다.
+## 공개 Windows CI 이력
+
+| 시점 | 실행 대상 SHA | 결과 |
+| --- | --- | --- |
+| 최초 공개 스냅샷 | `3e8a9ef4946f892da0895a429d19f293f76acc36` | [최초 공개 CI](https://github.com/rake8368-create/WhiteBox-QA-Studio-Portfolio/actions/runs/45509589489) |
+| 최종 제품 검증 기준 | `47706f73b92fe226dcbded30bad978ece3f1f216` | [최종 제품 기준 CI](https://github.com/rake8368-create/WhiteBox-QA-Studio-Portfolio/actions/runs/45510209011) |
+| 최신 포트폴리오 문서 | 공개 `main`에서 실행별 SHA를 표시 | [공개 main CI 실행 목록](https://github.com/rake8368-create/WhiteBox-QA-Studio-Portfolio/actions/workflows/dotnet-ci.yml?query=branch%3Amain) |
+
+최초 공개와 최종 제품 기준 CI 모두 Release 경고·오류 0건, xUnit 486/486·실패 0·건너뜀 0, 단일 EXE 게시, 스모크 5/5, 게시 스크립트 및 버전 검증을 통과했습니다. xUnit 수치는 로그와 TRX 카운터를 대조했습니다. 최신 문서 커밋은 위 제품 기준과 제품 소스·테스트·빌드 설정을 공유합니다.
 
 ## 제품 화면 검증
 
@@ -61,4 +69,4 @@
 - 제품 소스, 기존 테스트·샘플, 스크립트, 솔루션·빌드 설정과 서드파티 고지는 기준 Git blob과 비교했습니다.
 - 공개용 README, 아키텍처, 검증 보고서, 합성 샘플 및 화면을 추가했습니다. 범위 문서의 참조와 게시 구성 설명을 공개본에 맞췄고 Windows CI의 push 대상은 `main`으로 정리하고 xUnit 수치 검증과 실행 요약을 추가했습니다.
 
-[README](../README.md) · [아키텍처](ARCHITECTURE.md) · [서드파티 고지](THIRD_PARTY_NOTICES.txt)
+[README](../README.md) · [QA 테스트 전략](QA_TEST_STRATEGY.md) · [결함 사례](DEFECT_CASE_STUDIES.md) · [아키텍처](ARCHITECTURE.md) · [서드파티 고지](THIRD_PARTY_NOTICES.txt)

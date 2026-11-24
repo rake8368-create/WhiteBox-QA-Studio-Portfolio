@@ -8,13 +8,15 @@
 | --- | --- | --- | --- |
 | 6개 | 16개 | 486개 통과, 실패·건너뜀 0 | `0.2.1-dev` |
 
-[검증 보고서](docs/VERIFICATION.md) · [아키텍처](docs/ARCHITECTURE.md) · [제품 소스](src/) · [자동화 테스트](tests/) · [Windows CI](https://github.com/rake8368-create/WhiteBox-QA-Studio-Portfolio/actions/workflows/dotnet-ci.yml?query=branch%3Amain)
+[QA 테스트 전략](docs/QA_TEST_STRATEGY.md) · [결함 사례](docs/DEFECT_CASE_STUDIES.md) · [검증 보고서](docs/VERIFICATION.md) · [아키텍처](docs/ARCHITECTURE.md) · [제품 소스](src/) · [자동화 테스트](tests/) · [Windows CI](https://github.com/rake8368-create/WhiteBox-QA-Studio-Portfolio/actions/workflows/dotnet-ci.yml?query=branch%3Amain)
 
 ## 프로젝트와 QA 역할
 
 예외가 조용히 무시되는 곳이나 잘못된 구문을 코드 리뷰 전에 발견하고, 개발자에게 수정 판단에 필요한 근거를 전달하기 위해 만들었습니다. 로컬 파일·폴더 또는 공개 HTTPS Git 기본 브랜치에서 소스를 읽고, 분석 대상 코드를 실행하지 않고 검토합니다.
 
-개인 프로젝트의 요구사항, 언어별 분석 범위, 예외 사례, 회귀 테스트와 완료 기준을 정의했습니다. Codex를 활용해 구현·리뷰·테스트를 반복했고, 최종 판단은 xUnit 결과, Windows 게시 스모크, 제품 GUI와 내보낸 보고서를 근거로 확인했습니다.
+Codex를 활용한 개인 프로젝트에서 요구사항, 언어별 분석 범위, 테스트 전략과 완료 기준을 정했습니다. 입력과 기대 결과를 쌍으로 정리해 동등 분할과 경계값 분석을 적용하고, 구문 오류·빈 catch·저장 경로의 복합 조건은 결과와 제한 사유를 함께 검증했습니다. [QA 테스트 전략](docs/QA_TEST_STRATEGY.md)
+
+리뷰에서는 결함 조건을 재현하고 수정한 동작을 회귀 테스트로 고정했습니다. 최종 검증은 Windows CI의 xUnit 로그·TRX와 게시 스모크, 실제 WPF의 혼합 분석·원본 이동·CFG, Excel 저장 결과를 대조했습니다. [결함 사례](docs/DEFECT_CASE_STUDIES.md) · [검증 보고서](docs/VERIFICATION.md)
 
 ## 실제 제품 화면
 
@@ -86,8 +88,13 @@
 
 ## 결함 수정 사례
 
-- **단일 EXE의 네이티브 추출 경로 충돌** — 게시 스테이징과 추출 폴더를 분리하고 호출별·스모크별 추출 경로를 부여했습니다. 스모크 실패 시 이전 EXE와 호출자 환경을 보존하는 회귀 검증을 추가했습니다. [게시 스크립트](scripts/publish-win-x64.ps1) · [회귀 테스트](tests/PublishScripts.Tests.ps1)
-- **구버전 C++ 이력이 분석 완료로 보일 수 있는 호환성 문제** — 신규 분석기 지원 여부와 저장된 이력의 분석 여부를 분리했습니다. 이전 C++ 항목의 발견 수와 분석 0건을 보존하는 xUnit 테스트가 이를 검증합니다. [C++ 통합 테스트](tests/WhiteBoxQA.Tests/CppIntegrationTests.cs)
+| 재현 사례 | 수정 및 확인 |
+| --- | --- |
+| 제외 폴더를 바로 반환해 취소가 누락됨 | 읽기 진입점에서 취소를 먼저 확인 |
+| 단일 EXE의 두 번째 스모크가 추출물 재사용 | 스테이징 밖에서 언어별로 새 추출 위치 사용 |
+| 리디렉션·상대 Documents 경로에서 기본 저장 위치 준비 실패 | 경로를 검사하고 이미 저장한 폴더를 대화상자에 제안 |
+
+각 사례의 재현 조건, 수정 코드와 회귀 테스트를 연결했습니다. [결함 사례](docs/DEFECT_CASE_STUDIES.md)
 
 ## 빌드, 실행 및 검증
 
